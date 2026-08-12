@@ -1,0 +1,341 @@
+/* FinOpsWay site styles.
+ *
+ * Every colour here is one the extension already uses, so the site and the
+ * product cannot drift: #0e1418 is the dark Databricks nav the chip sits in,
+ * #eef3f5 the amount, #7c868d the muted ink, #3ddc97 the healthy lamp, and
+ * #e8452c the brand red. Nothing was invented for the website. */
+
+:root {
+  --ink: #0e1418;
+  --ink-lift: #1d252b;
+  --pale: #eef3f5;
+  --muted: #7c868d;
+  --red: #e8452c;
+  --mint: #3ddc97;
+
+  --paper: #f7f9fa;
+  --surface: #ffffff;
+  --fg: #1b3139;
+  --fg-soft: #4d626c;
+  --border: #e2e8eb;
+
+  --measure: 64ch;
+  --pad: clamp(20px, 5vw, 48px);
+
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: Consolas, "SF Mono", ui-monospace, "Cascadia Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #12191d;
+    --surface: #182227;
+    --fg: #eef3f5;
+    --fg-soft: #a8b8c0;
+    --border: #26333a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+p {
+  margin: 0;
+  max-width: var(--measure);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.87em;
+}
+
+a {
+  color: var(--red);
+}
+
+a:focus-visible,
+.skip:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Keyboard users get to the content without walking the nav. */
+.skip {
+  position: absolute;
+  left: -9999px;
+}
+.skip:focus {
+  left: 12px;
+  top: 12px;
+  z-index: 2;
+  background: var(--pale);
+  color: var(--ink);
+  padding: 8px 14px;
+  border-radius: 3px;
+}
+
+/* ---------- masthead ------------------------------------------------------ */
+/* Flat, not a gradient: the header glyph knocks its ring out in var(--ink),
+ * which only disappears if the background behind it is one colour. */
+.masthead {
+  background: var(--ink);
+  color: var(--pale);
+  padding: 0 var(--pad) clamp(56px, 9vw, 96px);
+}
+
+.bar {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 22px 0;
+}
+
+.lockup {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+}
+
+.glyph {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+
+.wordmark {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.wordmark.small {
+  font-size: 17px;
+}
+.wm-red {
+  color: var(--red);
+}
+.wm-pale {
+  color: var(--pale);
+}
+
+.nav {
+  margin-left: auto;
+  display: flex;
+  gap: 22px;
+  font-size: 15px;
+}
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.nav a:hover {
+  color: var(--pale);
+}
+
+.hero {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-top: clamp(28px, 5vw, 52px);
+}
+
+h1 {
+  font-size: clamp(30px, 5.4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+  text-wrap: balance;
+  margin: 0;
+  max-width: 24ch;
+}
+
+.standfirst {
+  font-size: clamp(17px, 2.2vw, 20px);
+  color: #b6c2c9;
+  max-width: 58ch;
+}
+
+/* ---------- the chip, as it renders in the product ----------------------- */
+.chipdemo {
+  padding-top: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink-lift);
+  border: 1px solid #2c363d;
+  border-radius: 999px;
+  padding: 9px 17px;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.lamp {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.18);
+}
+
+.amount {
+  color: var(--pale);
+  font-weight: 700;
+}
+.denom,
+.window {
+  color: var(--muted);
+}
+
+.caption {
+  font-size: 14.5px;
+  color: var(--muted);
+  max-width: 56ch;
+}
+
+/* ---------- sections ----------------------------------------------------- */
+/* The +2*--pad keeps the CONTENT box at 960px, so section text lines up with
+ * the masthead's .bar and .hero, which are 960px inside the masthead's own
+ * horizontal padding. A flat max-width:960px here would inset them by --pad
+ * relative to the header and read as a wobble down the left edge. */
+.section {
+  max-width: calc(960px + var(--pad) * 2);
+  margin: 0 auto;
+  padding: clamp(44px, 7vw, 76px) var(--pad);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-child {
+  border-bottom: none;
+}
+
+h2 {
+  font-size: clamp(22px, 3vw, 27px);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0;
+}
+
+h3 {
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  margin: 0;
+}
+
+.lead {
+  color: var(--fg-soft);
+}
+
+.note {
+  font-size: 15px;
+  color: var(--fg-soft);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.card p {
+  font-size: 15.5px;
+  color: var(--fg-soft);
+  max-width: none;
+}
+
+/* ---------- facts ------------------------------------------------------- */
+.facts {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fact {
+  background: var(--surface);
+  padding: 15px 20px;
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 18px;
+  align-items: baseline;
+}
+
+/* --fg-soft, not --muted: #7c868d is 4.81:1 on the dark masthead but only
+ * 3.75:1 on a white card, which fails AA for 11px text. --fg-soft is 6.31:1
+ * light and 7.97:1 dark. */
+.fact dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+
+.fact dd {
+  margin: 0;
+  font-size: 15.5px;
+  color: var(--fg-soft);
+}
+
+/* ---------- footer ------------------------------------------------------ */
+.footer {
+  background: var(--ink);
+  color: var(--muted);
+  padding: 0 var(--pad);
+  margin-top: clamp(24px, 5vw, 48px);
+}
+/* margin-left:auto, not a `.footer p` rule: a `.footer p { margin: 0 }` would
+ * out-specify a single-class .colophon and silently undo it. The global
+ * `p { margin: 0 }` already covers the reset. */
+.colophon {
+  margin-left: auto;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .fact {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- The Threshold mark: a spend trace rising through a budget cap, with the
+       crossing knocked out and filled in brand red. Same geometry as the
+       extension's toolbar icon (src/mark.js in the extension repo), scaled from
+       its 128 grid to 32. -->
+  <defs>
+    <!-- userSpaceOnUse, so the ring's knockout samples the SAME gradient the
+         tile does. With the default objectBoundingBox it would map the whole
+         ramp onto the little circle and show up as a patch. -->
+    <linearGradient id="tile" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="32">
+      <stop offset="0" stop-color="#1d252b" />
+      <stop offset="1" stop-color="#0e1418" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7.11" fill="url(#tile)" />
+  <path d="M4.5 12H20.96" stroke="#7c868d" stroke-width="2" stroke-linecap="round" fill="none" />
+  <path
+    d="M5 25L14.5 20L25 7"
+    stroke="#eef3f5"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <circle cx="20.96" cy="12" r="5" fill="url(#tile)" />
+  <circle cx="20.96" cy="12" r="3.63" fill="#e8452c" />
+</svg>

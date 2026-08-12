@@ -1,0 +1,53 @@
+# Publishes public/ to GitHub Pages.
+#
+# There is no build step: public/ is plain static files, so the workflow uploads
+# the folder as-is and hands it to Pages. Add a build here only when something
+# actually needs compiling.
+#
+# The site lands at https://aidatafab.github.io/finopsway/ - a PROJECT page, so
+# it is served from a subpath. Keep asset links in public/ relative ("./x.css");
+# a root-absolute "/x.css" resolves to the domain root and 404s.
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    # Only the published folder and this workflow can change the site, so a
+    # push that touches neither does not need a deploy.
+    paths:
+      - "public/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write # deploy-pages needs this
+  id-token: write # and the OIDC token it authenticates the deploy with
+
+# One deploy at a time. Not cancel-in-progress: cancelling a half-finished
+# deploy is how you get a site serving a mix of two commits.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # enablement: true turns Pages on via the API if it is off, so the repo
+      # does not need a visit to Settings before the first run.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FinOpsWay - today's Databricks cost, in the workspace toolbar</title>
+    <meta
+      name="description"
+      content="A browser extension that shows today's Databricks cost, scoped to the page you are on, in the workspace top navigation. No backend, no OAuth, nothing to deploy."
+    />
+    <!-- Relative, not root-absolute: this is a project page served from
+         /finopsway/, so a leading slash would 404. -->
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="masthead">
+      <div class="bar">
+        <a class="lockup" href="./" aria-label="FinOpsWay home">
+          <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M2.2 11.2H21.95" stroke="#7c868d" stroke-width="2.4" stroke-linecap="round" fill="none" />
+            <path
+              d="M2.8 26.8L14.2 20.8L26.8 5.2"
+              stroke="#eef3f5"
+              stroke-width="3.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"
+            />
+            <circle cx="21.95" cy="11.2" r="6" fill="var(--ink)" />
+            <circle cx="21.95" cy="11.2" r="4.35" fill="#e8452c" />
+          </svg>
+          <span class="wordmark"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
+        </a>
+        <nav class="nav">
+          <a href="#what">What it does</a>
+          <a href="#where">Where it runs</a>
+        </nav>
+      </div>
+
+      <div class="hero">
+        <h1>Today's Databricks cost, on the page you are already looking at.</h1>
+        <p class="standfirst">
+          FinOpsWay is a browser extension that puts one number in your Databricks
+          workspace navigation: what this cluster, warehouse, job or pipeline has
+          cost today, and what the whole workspace has cost around it.
+        </p>
+
+        <!-- The chip as it actually renders, in the extension's own colours. -->
+        <div class="chipdemo" role="img" aria-label="Toolbar chip reading: 18 dollars 70 of 587 dollars today, up to 11:00">
+          <span class="chip">
+            <span class="lamp"></span>
+            <span class="amount">$18.70</span>
+            <span class="denom">of $587</span>
+            <span class="window">today &rarr; 11:00</span>
+          </span>
+        </div>
+        <p class="caption">
+          The window ends where billing has actually reported, not at the current
+          hour. A number that hides its own missing hours is worse than no number.
+        </p>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section" id="what">
+        <h2>What it does</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Scoped to the page</h3>
+            <p>
+              On a cluster, SQL warehouse, job, job run, pipeline or pipeline
+              update page you get that resource's own spend against the whole
+              workspace's, so the smaller figure always arrives with a
+              denominator. On the home page it is the workspace alone.
+            </p>
+          </article>
+          <article class="card">
+            <h3>An honest window</h3>
+            <p>
+              Billing reports on a lag, so a window ending at <em>now</em> is part
+              empty by construction. The chip ends its window where the data
+              actually stops and draws the hours since as a hatched overhang.
+            </p>
+          </article>
+          <article class="card">
+            <h3>No backend</h3>
+            <p>
+              It runs a real SQL query against the <code>system.billing</code>
+              tables from the browser itself. No service to deploy, no OAuth flow.
+              The credential is a workspace personal access token you paste into
+              the options page.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="where">
+        <h2>Where it runs</h2>
+        <dl class="facts">
+          <div class="fact">
+            <dt>Clouds</dt>
+            <dd>
+              Databricks on AWS (<code>*.cloud.databricks.com</code>) and Azure
+              (<code>*.azuredatabricks.net</code>). Everything above the hostname
+              is identical on both.
+            </dd>
+          </div>
+          <div class="fact">
+            <dt>Browsers</dt>
+            <dd>Chrome, Edge and Firefox, as a Manifest V3 extension.</dd>
+          </div>
+          <div class="fact">
+            <dt>Credential</dt>
+            <dd>
+              A workspace personal access token, pasted into the extension's own
+              options page. It never leaves the browser.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="section" id="availability">
+        <h2>Availability</h2>
+        <p class="lead">
+          FinOpsWay is in active development and is not publicly available yet.
+          There is nothing to download: it has not been submitted to the Chrome,
+          Edge or Firefox extension stores.
+        </p>
+        <p class="note">
+          Install instructions will land on this page when it is ready to hand
+          out.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="bar">
+        <p>
+          <span class="wordmark small"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
+        </p>
+        <p class="colophon">Databricks cost, where the spending happens.</p>
+      </div>
+    </footer>
+  </body>
+</html>
