@@ -37,13 +37,14 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      # enablement: true turns Pages on via the API if it is off, so the repo
-      # does not need a visit to Settings before the first run.
+      # No `enablement: true` here. It looks like it would save the one-time
+      # setup, but the default GITHUB_TOKEN cannot create a Pages site
+      # ("Resource not accessible by integration"), so it fails the whole job
+      # instead. Pages has to be switched on once by hand:
+      #   Settings > Pages > Build and deployment > Source: GitHub Actions
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
