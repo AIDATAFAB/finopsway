@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy policy - FinOpsWay</title>
+    <meta
+      name="description"
+      content="Privacy policy for the finopsway-costs browser extension. No backend, no telemetry: nothing leaves your browser except the query, which goes to the Databricks workspace you are already signed in to."
+    />
+    <!-- The store listings link here, so the URL has to stay put. A policy URL
+         that starts 404ing is grounds for a listing to be pulled. -->
+    <link rel="canonical" href="https://finopsway.com/privacy/" />
+    <!-- One directory down, so assets are ../ - this page is served at
+         /privacy/ by the directory index, which needs no server rewrite. -->
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="masthead is-compact">
+      <div class="bar">
+        <a class="lockup" href="../" aria-label="FinOpsWay home">
+          <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M2.2 11.2H21.95" stroke="#7c868d" stroke-width="2.4" stroke-linecap="round" fill="none" />
+            <path
+              d="M2.8 26.8L14.2 20.8L26.8 5.2"
+              stroke="#eef3f5"
+              stroke-width="3.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"
+            />
+            <circle cx="21.95" cy="11.2" r="6" fill="var(--ink)" />
+            <circle cx="21.95" cy="11.2" r="4.35" fill="#e8452c" />
+          </svg>
+          <span class="wordmark"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
+        </a>
+        <nav class="nav">
+          <a href="../">Home</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="section prose">
+      <h1 class="prose-title">Privacy policy</h1>
+      <p class="prose-meta">
+        <strong>finopsway-costs</strong> browser extension. Last updated 12 August 2026.
+      </p>
+      <p>
+        This page is the privacy policy linked from the extension's Chrome Web
+        Store and addons.mozilla.org listings, which require a policy at a public
+        URL for any extension that handles authentication information. It
+        describes the extension's behaviour as shipped.
+      </p>
+
+      <h2>The short version</h2>
+      <p>
+        The extension has no backend. Nothing it reads leaves your browser, except
+        to go back to the Databricks workspace you are already signed in to. We
+        operate no server, receive no data, and have no way to see what you query.
+      </p>
+
+      <h2>What the extension handles</h2>
+      <p>
+        <strong>A Databricks personal access token, if you choose token mode.</strong>
+        It is stored with <code>chrome.storage.local</code>, keyed by workspace
+        origin. That store is readable by this extension alone, is never synced to
+        a browser account, and is cleared when you remove the token from the
+        options page or uninstall the extension. In session mode nothing is
+        stored: the extension reuses the workspace session you already have, and
+        the CSRF token it needs is fetched per request and held in memory for the
+        duration of that request.
+      </p>
+      <p>
+        <strong>Databricks billing usage records and SKU prices.</strong> The
+        extension runs a read-only SQL query against the
+        <code>system.billing</code> tables of your own workspace and keeps the
+        rows in IndexedDB, in the workspace origin's own storage. This is a cache:
+        it holds a rolling window of about a week, is pruned on every sync, and
+        can be dropped at any time from the options page. It contains only records
+        the signed-in identity is already entitled to read.
+      </p>
+      <p>
+        <strong>Extension settings.</strong> Your warehouse choice, catalog and
+        display preferences, in <code>chrome.storage.local</code>.
+      </p>
+
+      <h2>Where data goes</h2>
+      <p>
+        Every network request the extension makes is to the Databricks workspace
+        host you are visiting, matching <code>*.cloud.databricks.com</code> or
+        <code>*.azuredatabricks.net</code>. There are no other hosts, and the
+        extension declares no permission that would allow any. Your token is sent
+        to that workspace and nowhere else. Credentials are keyed by workspace
+        origin, so a token for one workspace is not reachable from another.
+      </p>
+
+      <h2>What we do not do</h2>
+      <ul>
+        <li>
+          We do not collect, receive, store or transmit any of your data. There is
+          no server to send it to.
+        </li>
+        <li>We do not sell or transfer your data to third parties.</li>
+        <li>
+          We do not use your data for anything unrelated to the extension's single
+          purpose, which is displaying your Databricks spend.
+        </li>
+        <li>We do not use your data to determine creditworthiness or for lending.</li>
+        <li>
+          There is no analytics, telemetry, crash reporting or advertising of any
+          kind.
+        </li>
+        <li>
+          The extension writes nothing to Databricks. Its SQL only reads
+          <code>system.billing</code>.
+        </li>
+      </ul>
+
+      <h2>Logging</h2>
+      <p>
+        Released builds do not write diagnostic traces to the page console. Even in
+        a development build with tracing enabled, the access token and the CSRF
+        token are never logged; the trace names the authentication mode only, and
+        automated tests enforce that.
+      </p>
+
+      <h2>Removing your data</h2>
+      <p>
+        Uninstalling the extension removes the stored token and settings. The
+        cached billing rows live in the workspace origin's IndexedDB and are
+        removed by the <strong>Clear cached usage</strong> action on the options
+        page, or by clearing site data for the workspace in your browser.
+      </p>
+
+      <h2>A note on token scope</h2>
+      <p>
+        A Databricks personal access token is a full-privilege workspace
+        credential; it cannot be scoped to <code>system.billing</code> alone. The
+        extension only ever issues read-only billing queries with it, but you
+        should treat the token as you would any workspace credential: prefer a
+        short-lived one, and revoke it in Databricks when you no longer need it.
+        Session mode avoids storing a credential at all.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy:
+        <a href="mailto:mail@finopsway.com">mail@finopsway.com</a>.
+      </p>
+    </main>
+
+    <footer class="footer">
+      <div class="bar">
+        <div class="footer-id">
+          <span class="wordmark small"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
+          <p class="colophon">Databricks cost, where the spending happens.</p>
+        </div>
+        <nav class="nav">
+          <a href="../">Home</a>
+          <a href="mailto:mail@finopsway.com">Contact</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

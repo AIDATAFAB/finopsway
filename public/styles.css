@@ -317,6 +317,53 @@ h3 {
   color: var(--fg-soft);
 }
 
+/* ---------- prose (the privacy policy) ---------------------------------- */
+/* Used as `class="section prose"`, so it inherits the section's centred
+ * measure and flex-column gap. It must undo the section's rule: .prose is
+ * declared after .section at equal specificity, so it wins. */
+.prose {
+  border-bottom: none;
+}
+
+.prose-title {
+  font-size: clamp(28px, 4.4vw, 38px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+  margin: 0;
+}
+
+.prose-meta {
+  color: var(--fg-soft);
+  font-size: 15.5px;
+}
+
+/* Extra air above a heading than the section's flex gap alone gives, so the
+ * policy reads as sections rather than one undifferentiated column. */
+.prose h2 {
+  margin-top: 18px;
+}
+
+.prose ul {
+  margin: 0;
+  padding-left: 22px;
+  max-width: var(--measure);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prose code {
+  background: color-mix(in srgb, var(--fg) 7%, transparent);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* No hero underneath, so the masthead does not need the hero's bottom room. */
+.masthead.is-compact {
+  padding-bottom: 0;
+}
+
 /* ---------- footer ------------------------------------------------------ */
 .footer {
   background: var(--ink);
@@ -324,11 +371,15 @@ h3 {
   padding: 0 var(--pad);
   margin-top: clamp(24px, 5vw, 48px);
 }
-/* margin-left:auto, not a `.footer p` rule: a `.footer p { margin: 0 }` would
- * out-specify a single-class .colophon and silently undo it. The global
- * `p { margin: 0 }` already covers the reset. */
+.footer-id {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* No margin-left:auto here - .nav already claims the free space, and two
+ * competing autos would split it and pull the tagline off the wordmark. */
 .colophon {
-  margin-left: auto;
   font-size: 14.5px;
   color: var(--muted);
 }
