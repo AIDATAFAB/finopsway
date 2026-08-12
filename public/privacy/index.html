@@ -22,18 +22,22 @@
     <header class="masthead is-compact">
       <div class="bar">
         <a class="lockup" href="../" aria-label="FinOpsWay home">
+          <!-- The Threshold mark, same geometry as the extension's icon
+               (src/mark.js in the extension repo), scaled from its 128 grid to
+               32. The ring knocks its gap out in var(--ink), which only
+               disappears because the masthead behind it is one flat colour. -->
           <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M2.2 11.2H21.95" stroke="#7c868d" stroke-width="2.4" stroke-linecap="round" fill="none" />
+            <path d="M4.5 12H20.96" stroke="#7c868d" stroke-width="2" stroke-linecap="round" fill="none" />
             <path
-              d="M2.8 26.8L14.2 20.8L26.8 5.2"
+              d="M5 25L14.5 20L25 7"
               stroke="#eef3f5"
-              stroke-width="3.6"
+              stroke-width="3"
               stroke-linecap="round"
               stroke-linejoin="round"
               fill="none"
             />
-            <circle cx="21.95" cy="11.2" r="6" fill="var(--ink)" />
-            <circle cx="21.95" cy="11.2" r="4.35" fill="#e8452c" />
+            <circle cx="20.96" cy="12" r="5" fill="var(--ink)" />
+            <circle cx="20.96" cy="12" r="3.63" fill="#e8452c" />
           </svg>
           <span class="wordmark"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
         </a>

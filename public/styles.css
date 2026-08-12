@@ -3,7 +3,9 @@
  * Every colour here is one the extension already uses, so the site and the
  * product cannot drift: #0e1418 is the dark Databricks nav the chip sits in,
  * #eef3f5 the amount, #7c868d the muted ink, #3ddc97 the healthy lamp, and
- * #e8452c the brand red. Nothing was invented for the website. */
+ * #e8452c the brand red. The one addition is #3f6a7d for the timeline's
+ * reported span - deliberately not a lamp colour, because the lamp colours are
+ * status and the timeline is not reporting a status. */
 
 :root {
   --ink: #0e1418;
@@ -12,6 +14,7 @@
   --muted: #7c868d;
   --red: #e8452c;
   --mint: #3ddc97;
+  --span: #3f6a7d;
 
   --paper: #f7f9fa;
   --surface: #ffffff;
@@ -137,7 +140,8 @@ a:focus-visible,
 .nav {
   margin-left: auto;
   display: flex;
-  gap: 22px;
+  flex-wrap: wrap;
+  gap: 8px 22px;
   font-size: 15px;
 }
 .nav a {
@@ -172,6 +176,122 @@ h1 {
   color: #b6c2c9;
   max-width: 58ch;
 }
+.standfirst em {
+  color: var(--pale);
+  font-style: italic;
+}
+
+/* ---------- the two clocks ------------------------------------------------ */
+/* The gap is the argument, so the clocks render before the headline. "Your
+ * clock" is deliberately hollow - the present is the part with no data in it
+ * yet - and the stroke fallback keeps it legible where text-stroke is not
+ * supported.
+ *
+ * The composition is the store promo tile's: three equal columns over one
+ * bar, with the hatch starting at the third column (see .timebar-known and
+ * .timelabels-known - the fractions must agree), so the difference clock
+ * sits exactly over the hours nobody has data for. */
+.clocks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.clk {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.clk-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.clk-time {
+  font-size: clamp(40px, 8vw, 72px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.clk-now .clk-time {
+  color: #55636b;
+}
+@supports (-webkit-text-stroke: 1px black) {
+  .clk-now .clk-time {
+    color: transparent;
+    -webkit-text-stroke: 1.5px #55636b;
+  }
+}
+
+.clk-known .clk-time {
+  color: var(--pale);
+}
+
+.clk-gap .clk-label {
+  color: var(--red);
+}
+.clk-gap .clk-time {
+  color: var(--red);
+  font-size: clamp(26px, 4.6vw, 42px);
+}
+
+/* ---------- the timeline -------------------------------------------------- */
+/* One bar, two textures: solid for the hours billing has reported, hatched
+ * for the hours since. The hatch is the extension's own overhang idiom. */
+/* Full hero width, not a capped one: the clocks grid above shares the 78%
+ * split, and the two only line up if they are the same width. */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.timebar {
+  display: flex;
+  height: 14px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #212c33;
+}
+
+.timebar-known {
+  /* Two clock columns of the three above, so the hatch starts under the
+   * difference clock. The gap between columns keeps this exact enough. */
+  flex: 0 0 66.666%;
+  background: var(--span);
+}
+
+.timebar-gap {
+  flex: 1;
+  background-color: #141d22;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 3px,
+    rgba(238, 243, 245, 0.35) 3px 5px
+  );
+}
+
+.timelabels {
+  display: flex;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.timelabels-known {
+  flex: 0 0 66.666%;
+}
+.timelabels-gap {
+  white-space: nowrap;
+}
 
 /* ---------- the chip, as it renders in the product ----------------------- */
 .chipdemo {
@@ -199,6 +319,11 @@ h1 {
   border-radius: 50%;
   background: var(--mint);
   box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.18);
+}
+.lamp.small {
+  width: 7px;
+  height: 7px;
+  box-shadow: 0 0 0 2px rgba(61, 220, 151, 0.18);
 }
 
 .amount {
@@ -279,6 +404,67 @@ h3 {
   max-width: none;
 }
 
+/* ---------- chip anatomy -------------------------------------------------- */
+/* Each term opens with the fragment of the chip it names, rendered in the
+ * chip's own colours. The pills are literal product colours on both themes,
+ * because they depict the product rather than the page. */
+/* minmax(300px), not the cards' 240px: four parts at 240 break 3+1 inside the
+ * 960px measure and orphan the horizon on its own row; 300 makes it a 2x2. */
+.anatomy {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.part {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.part dt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.part dd {
+  margin: 0;
+  font-size: 15px;
+  color: var(--fg-soft);
+}
+
+.chipbit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--ink-lift);
+  border: 1px solid #2c363d;
+  border-radius: 999px;
+  padding: 5px 11px;
+  min-width: 34px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
+}
+
+.bit-amount {
+  color: var(--pale);
+  font-weight: 700;
+}
+.bit-denom,
+.bit-window {
+  color: var(--muted);
+}
+
 /* ---------- facts ------------------------------------------------------- */
 .facts {
   margin: 0;
@@ -315,6 +501,37 @@ h3 {
   margin: 0;
   font-size: 15.5px;
   color: var(--fg-soft);
+}
+
+/* ---------- get it -------------------------------------------------------- */
+.getrow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cta {
+  display: inline-block;
+  background: var(--red);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 11px 18px;
+  border-radius: 4px;
+}
+.cta:hover {
+  filter: brightness(1.08);
+}
+
+.cta.ghost {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+.cta.ghost:hover {
+  filter: none;
+  background: color-mix(in srgb, var(--red) 8%, transparent);
 }
 
 /* ---------- prose (the privacy policy) ---------------------------------- */
@@ -384,9 +601,29 @@ h3 {
   color: var(--muted);
 }
 
+/* Below this a third of the row cannot hold a clock; the grid gives way to a
+ * plain wrapping row and the exact hatch alignment with it. */
+@media (max-width: 720px) {
+  .clocks {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 18px 40px;
+  }
+}
+
 @media (max-width: 560px) {
   .fact {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+  /* The 78% basis plus a nowrap label overflows a phone; let the reported
+   * label shrink and the hatched label wrap instead. */
+  .timelabels-known {
+    flex: 1 1 auto;
+  }
+  .timelabels-gap {
+    white-space: normal;
+    text-align: right;
   }
 }

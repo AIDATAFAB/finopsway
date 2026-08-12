@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FinOpsWay - today's Databricks cost, in the workspace toolbar</title>
+    <title>FinOpsWay - Databricks cost, with the lag drawn in</title>
     <meta
       name="description"
-      content="A browser extension that shows today's Databricks cost, scoped to the page you are on, in the workspace top navigation. No backend, no OAuth, nothing to deploy."
+      content="A free browser extension that puts Databricks cost in the workspace top navigation, scoped to the page you are on. Billing reports on a lag; FinOpsWay ends its window where the data actually ends and draws the missing hours as missing."
     />
     <!-- Relative, not root-absolute: this is a project page served from
          /finopsway/, so a leading slash would 404. -->
@@ -19,34 +19,72 @@
     <header class="masthead">
       <div class="bar">
         <a class="lockup" href="./" aria-label="FinOpsWay home">
+          <!-- The Threshold mark, same geometry as the extension's icon
+               (src/mark.js in the extension repo), scaled from its 128 grid to
+               32. The ring knocks its gap out in var(--ink), which only
+               disappears because the masthead behind it is one flat colour. -->
           <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M2.2 11.2H21.95" stroke="#7c868d" stroke-width="2.4" stroke-linecap="round" fill="none" />
+            <path d="M4.5 12H20.96" stroke="#7c868d" stroke-width="2" stroke-linecap="round" fill="none" />
             <path
-              d="M2.8 26.8L14.2 20.8L26.8 5.2"
+              d="M5 25L14.5 20L25 7"
               stroke="#eef3f5"
-              stroke-width="3.6"
+              stroke-width="3"
               stroke-linecap="round"
               stroke-linejoin="round"
               fill="none"
             />
-            <circle cx="21.95" cy="11.2" r="6" fill="var(--ink)" />
-            <circle cx="21.95" cy="11.2" r="4.35" fill="#e8452c" />
+            <circle cx="20.96" cy="12" r="5" fill="var(--ink)" />
+            <circle cx="20.96" cy="12" r="3.63" fill="#e8452c" />
           </svg>
           <span class="wordmark"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
         </a>
         <nav class="nav">
+          <a href="#principle">The window</a>
           <a href="#what">What it does</a>
-          <a href="#where">Where it runs</a>
+          <a href="#get">Get it</a>
           <a href="#privacy">Your data</a>
         </nav>
       </div>
 
       <div class="hero">
-        <h1>Today's Databricks cost, on the page you are already looking at.</h1>
+        <!-- The clocks come before the headline on purpose: the gap is the
+             argument, and the visitor should meet it before any product claim.
+             The static times below are a fallback; script replaces them with
+             the visitor's real clock and an illustrative two-hour lag. -->
+        <div class="clocks">
+          <div class="clk clk-now">
+            <span class="clk-label">Your clock</span>
+            <span class="clk-time" id="clk-now">13:42</span>
+          </div>
+          <div class="clk clk-known">
+            <span class="clk-label">Your bill's clock</span>
+            <span class="clk-time" id="clk-known">11:00</span>
+          </div>
+          <div class="clk clk-gap">
+            <span class="clk-label">The difference</span>
+            <span class="clk-time" id="clk-gap">2 h 42 m</span>
+          </div>
+        </div>
+
+        <div class="timeline" role="img" aria-label="A timeline of the last day: most of it reported by billing, the last couple of hours hatched because nobody has data for them yet">
+          <div class="timebar">
+            <span class="timebar-known"></span>
+            <span class="timebar-gap"></span>
+          </div>
+          <div class="timelabels">
+            <span class="timelabels-known">reported by billing</span>
+            <span class="timelabels-gap">nobody knows yet</span>
+          </div>
+        </div>
+
+        <h1>Every cost tool hides those hours. This one draws them.</h1>
         <p class="standfirst">
-          FinOpsWay is a browser extension that puts one number in your Databricks
-          workspace navigation: what this cluster, warehouse, job or pipeline has
-          cost today, and what the whole workspace has cost around it.
+          Databricks billing reports on a lag, so a window that ends at
+          <em>now</em> is part empty by construction. FinOpsWay is a free
+          browser extension that puts one number in your workspace navigation,
+          scoped to the page you are on, and ends its window where the data
+          actually ends. The missing hours are hatched, never padded with
+          silence.
         </p>
 
         <!-- The chip as it actually renders, in the extension's own colours. -->
@@ -55,17 +93,62 @@
             <span class="lamp"></span>
             <span class="amount">$18.70</span>
             <span class="denom">of $587</span>
-            <span class="window">today &rarr; 11:00</span>
+            <span class="window">today &rarr; <span id="chip-known">11:00</span></span>
           </span>
         </div>
         <p class="caption">
-          The window ends where billing has actually reported, not at the current
-          hour. A number that hides its own missing hours is worse than no number.
+          The two-hour lag above is an illustration; the real figure is your
+          workspace's own. What never changes is the rule: the window ends at
+          the last hour billing has reached, not at the current one.
         </p>
       </div>
     </header>
 
     <main id="main">
+      <section class="section" id="principle">
+        <h2>The window ends where the data ends</h2>
+        <p class="lead">
+          The chip measures a rolling 24 hours, anchored to the last hour your
+          workspace's billing ingestion has actually reached. It prints that
+          hour next to the amount, and in the detail view it draws the hours
+          since as a hatched overhang - a span nobody has data for yet, shown
+          as exactly that.
+        </p>
+        <dl class="anatomy">
+          <div class="part">
+            <dt><span class="chipbit"><span class="lamp small"></span></span> The lamp</dt>
+            <dd>
+              Freshness, and only freshness. Green never means cheap and red
+              never means expensive; colour roles stay fixed so the chip cannot
+              editorialise.
+            </dd>
+          </div>
+          <div class="part">
+            <dt><span class="chipbit"><span class="bit-amount">$18.70</span></span> The amount</dt>
+            <dd>
+              What the resource on this page has cost inside the window. A
+              real-but-tiny amount is never rounded down to a fake $0.00.
+            </dd>
+          </div>
+          <div class="part">
+            <dt><span class="chipbit"><span class="bit-denom">of $587</span></span> The denominator</dt>
+            <dd>
+              The whole workspace over the same window, so the smaller figure
+              always arrives with its context. Both amounts run on one anchor:
+              one clock, one window.
+            </dd>
+          </div>
+          <div class="part">
+            <dt><span class="chipbit"><span class="bit-window">&rarr; 11:00</span></span> The horizon</dt>
+            <dd>
+              Where the window ends: the last reported hour, stated rather than
+              implied. A number that hides its own missing hours is worse than
+              no number.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
       <section class="section" id="what">
         <h2>What it does</h2>
         <div class="cards">
@@ -73,26 +156,29 @@
             <h3>Scoped to the page</h3>
             <p>
               On a cluster, SQL warehouse, job, job run, pipeline or pipeline
-              update page you get that resource's own spend against the whole
-              workspace's, so the smaller figure always arrives with a
-              denominator. On the home page it is the workspace alone.
+              update page the chip answers for that resource, with the
+              workspace as its denominator. On the home page, the workspace
+              alone. An unrecognised page falls back to workspace scope rather
+              than to a blank chip.
             </p>
           </article>
           <article class="card">
-            <h3>An honest window</h3>
+            <h3>A real query, from your browser</h3>
             <p>
-              Billing reports on a lag, so a window ending at <em>now</em> is part
-              empty by construction. The chip ends its window where the data
-              actually stops and draws the hours since as a hatched overhang.
+              It runs a read-only SQL query against the
+              <code>system.billing</code> tables from the browser itself. No
+              backend, no OAuth flow, nothing to deploy. The credential is a
+              workspace personal access token you paste into the options page,
+              or optionally the browser session you already have.
             </p>
           </article>
           <article class="card">
-            <h3>No backend</h3>
+            <h3>Free, structurally</h3>
             <p>
-              It runs a real SQL query against the <code>system.billing</code>
-              tables from the browser itself. No service to deploy, no OAuth flow.
-              The credential is a workspace personal access token you paste into
-              the options page.
+              With no servers there are no costs to recover, so free is not a
+              tier, it is architecture. No account, no trial, no telemetry,
+              nothing to sell. The toolbar's own price tag is the one thing in
+              your workspace that reads $0.
             </p>
           </article>
         </div>
@@ -123,16 +209,28 @@
         </dl>
       </section>
 
-      <section class="section" id="availability">
-        <h2>Availability</h2>
+      <section class="section" id="get">
+        <h2>Get it</h2>
         <p class="lead">
-          FinOpsWay is in active development and is not publicly available yet.
-          There is nothing to download: it has not been submitted to the Chrome,
-          Edge or Firefox extension stores.
+          FinOpsWay is in active development and has not reached the Chrome,
+          Edge or Firefox stores yet. In the spirit of the page above, that
+          fact is stated rather than hidden - and it is not a dead end.
         </p>
+        <div class="getrow">
+          <a
+            class="cta"
+            href="mailto:mail@finopsway.com?subject=FinOpsWay%20pre-store%20build"
+            >Ask for the pre-store build</a
+          >
+          <a
+            class="cta ghost"
+            href="mailto:mail@finopsway.com?subject=Tell%20me%20when%20FinOpsWay%20ships"
+            >Tell me when it ships</a
+          >
+        </div>
         <p class="note">
-          Install instructions will land on this page when it is ready to hand
-          out.
+          Both go to a person, not a list. When the store listings land, the
+          install buttons replace this section.
         </p>
       </section>
 
@@ -157,7 +255,7 @@
       <div class="bar">
         <div class="footer-id">
           <span class="wordmark small"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
-          <p class="colophon">Databricks cost, where the spending happens.</p>
+          <p class="colophon">The window ends where the data ends.</p>
         </div>
         <nav class="nav">
           <a href="./privacy/">Privacy policy</a>
@@ -165,5 +263,46 @@
         </nav>
       </div>
     </footer>
+
+    <script>
+      // The two clocks. "Your clock" is the visitor's real time; "your bill's
+      // clock" trails it by an illustrative two hours, floored to the hour the
+      // way an ingestion horizon lands on hour boundaries. The static HTML
+      // times are the no-JS fallback and the caption's disclaimer covers both.
+      (function () {
+        var nowEl = document.getElementById("clk-now");
+        var knownEl = document.getElementById("clk-known");
+        var gapEl = document.getElementById("clk-gap");
+        var chipEl = document.getElementById("chip-known");
+        if (!nowEl || !knownEl || !gapEl) return;
+
+        // 24-hour, zero-padded: the format the chip itself prints ("-> 11:00"),
+        // so the site's clocks and the product's horizon read as one voice.
+        function fmt(d) {
+          var pad = function (n) {
+            return ("0" + n).slice(-2);
+          };
+          return pad(d.getHours()) + ":" + pad(d.getMinutes());
+        }
+
+        function tick() {
+          var now = new Date();
+          var known = new Date(now.getTime());
+          known.setMinutes(0, 0, 0);
+          known.setHours(known.getHours() - 2);
+
+          var mins = Math.round((now.getTime() - known.getTime()) / 60000);
+          var text = Math.floor(mins / 60) + " h " + ("0" + (mins % 60)).slice(-2) + " m";
+
+          nowEl.textContent = fmt(now);
+          knownEl.textContent = fmt(known);
+          gapEl.textContent = text;
+          if (chipEl) chipEl.textContent = fmt(known);
+        }
+
+        tick();
+        setInterval(tick, 30000);
+      })();
+    </script>
   </body>
 </html>
