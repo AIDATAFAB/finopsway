@@ -1,33 +1,42 @@
 # Publishes public/ to GitHub Pages.
 #
 # There is no build step: public/ is plain static files, so the workflow uploads
-# the folder as-is and hands it to Pages. Add a build here only when something
-# actually needs compiling.
+# the folder as-is and hands it to Pages. Add one here only when something
+# actually needs compiling - and if you do, put the same commands behind a
+# `pull_request` trigger with the deploy job guarded by
+# `if: github.event_name != 'pull_request'`, so a PR is checked but never
+# publishes.
 #
 # The site lands at https://aidatafab.github.io/finopsway/ - a PROJECT page, so
 # it is served from a subpath. Keep asset links in public/ relative ("./x.css");
 # a root-absolute "/x.css" resolves to the domain root and 404s.
+#
+# ONE-TIME SETUP, without which every run fails at "Setup Pages":
+#   Settings > Pages > Build and deployment > Source: GitHub Actions
 name: Deploy site to GitHub Pages
 
 on:
   push:
-    branches: [main]
-    # Only the published folder and this workflow can change the site, so a
-    # push that touches neither does not need a deploy.
+    branches: ["main"]
+    # Only the published folder and this workflow can change the site, so a push
+    # that touches neither does not need a deploy. Remove this filter if the
+    # published set ever grows beyond public/, or the new files will be built
+    # into the artifact but never trigger the build that ships them.
     paths:
       - "public/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages.
 permissions:
   contents: read
   pages: write # deploy-pages needs this
   id-token: write # and the OIDC token it authenticates the deploy with
 
-# One deploy at a time. Not cancel-in-progress: cancelling a half-finished
-# deploy is how you get a site serving a mix of two commits.
+# Allow only one concurrent deployment. NOT cancel-in-progress: cancelling a
+# half-finished deploy is how you get a site serving a mix of two commits.
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
@@ -35,20 +44,27 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v7
 
-      # No `enablement: true` here. It looks like it would save the one-time
-      # setup, but the default GITHUB_TOKEN cannot create a Pages site
+      # No `enablement: true` here. It reads like a way to skip the one-time
+      # setup above, but the default GITHUB_TOKEN cannot create a Pages site
       # ("Resource not accessible by integration"), so it fails the whole job
-      # instead. Pages has to be switched on once by hand:
-      #   Settings > Pages > Build and deployment > Source: GitHub Actions
-      - uses: actions/configure-pages@v5
+      # instead of bootstrapping anything.
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload artifact
+        # Publish only the site root - the workflow and anything else in the
+        # repo stays unpublished. Note that from v4 this action EXCLUDES
+        # dotfiles; nothing in public/ is hidden today, but a future .nojekyll
+        # or similar would need `include-hidden-files: true`.
+        uses: actions/upload-pages-artifact@v5
         with:
-          path: public
+          path: "public"
 
-      - id: deploy
-        uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
