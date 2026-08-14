@@ -601,17 +601,26 @@ h3 {
   color: var(--muted);
 }
 
-/* The trademark line sits under the whole footer bar, not beside the wordmark:
- * it is a full sentence and would fight the nav for the same row. Measure is
- * capped so it wraps into two or three lines rather than one long ruler. */
+/* Its own row under the footer bar rather than a third item inside it, which
+ * would fight the nav for the same line. It sits OUTSIDE .bar, so it has to
+ * repeat that column itself - and it overrides the 64ch measure every other
+ * `p` carries, or a one-line notice wraps for no reason. */
 .legal {
-  border-top: 1px solid var(--ink-lift);
-  padding: 14px 0 20px;
-  max-width: 78ch;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 0 20px;
   font-size: 13px;
-  line-height: 1.5;
   color: var(--muted);
-  opacity: 0.85;
+}
+
+/* Brand red on the ink footer reads as a call to action; a boilerplate line
+ * should not shout. Underlined so it is still visibly a link. */
+.legal a {
+  color: var(--muted);
+  text-decoration-color: var(--span);
+}
+.legal a:hover {
+  color: var(--pale);
 }
 
 /* Below this a third of the row cannot hold a clock; the grid gives way to a
