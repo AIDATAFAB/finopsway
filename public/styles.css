@@ -639,6 +639,31 @@ h3 {
     grid-template-columns: 1fr;
     gap: 4px;
   }
+
+  /* The lockup fills the row on its own, so `margin-left: auto` strands the
+   * links against the right edge one line below it - a header split down the
+   * middle with nothing between. Dropping it lines the nav up with the lockup,
+   * the hero text and everything else on the left edge. Both bars, header and
+   * footer, wrap the same way and want the same fix. */
+  .nav {
+    margin-left: 0;
+  }
+
+  /* Back to a grid, two columns wide. The wrapping flex fallback above already
+   * lands two clocks on one row and the difference on the next, but by accident
+   * of width and with a gap sized for a wider row: the two times end up unevenly
+   * spaced and the third hangs off them. Stating it gets an even split. The
+   * hatch alignment is already surrendered at 720px, so the difference simply
+   * takes the row rather than pretending to sit over a third of the bar. */
+  .clocks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+    gap: 16px 20px;
+  }
+  .clk-gap {
+    grid-column: 1 / -1;
+  }
   /* The 78% basis plus a nowrap label overflows a phone; let the reported
    * label shrink and the hatched label wrap instead. */
   .timelabels-known {
