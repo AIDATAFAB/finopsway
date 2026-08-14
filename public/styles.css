@@ -623,14 +623,33 @@ h3 {
   color: var(--pale);
 }
 
-/* Below this a third of the row cannot hold a clock; the grid gives way to a
- * plain wrapping row and the exact hatch alignment with it. */
+/* The three clocks hold ONE row all the way down: your clock, the bill's clock,
+ * the difference, left to right over the bar the difference sits above. What
+ * gives way is the type scale, never the row - wrapping it puts the difference
+ * under a clock instead of over the hatch, and the composition is the argument.
+ *
+ * `.clk` goes display:contents so the labels share grid row 1 and the times row
+ * 2. Without that, a label that wraps ("your bill's clock" is the long one)
+ * pushes its own time down and the three times stop lining up. */
 @media (max-width: 720px) {
   .clocks {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 18px 40px;
+    grid-auto-flow: column;
+    grid-template-rows: auto auto;
+    align-items: end;
+    gap: 6px 12px;
+  }
+  .clk {
+    display: contents;
+  }
+  .clk-label {
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+  }
+  .clk-time {
+    font-size: clamp(24px, 7.6vw, 44px);
+  }
+  .clk-gap .clk-time {
+    font-size: clamp(17px, 5vw, 30px);
   }
 }
 
@@ -649,21 +668,6 @@ h3 {
     margin-left: 0;
   }
 
-  /* Back to a grid, two columns wide. The wrapping flex fallback above already
-   * lands two clocks on one row and the difference on the next, but by accident
-   * of width and with a gap sized for a wider row: the two times end up unevenly
-   * spaced and the third hangs off them. Stating it gets an even split. The
-   * hatch alignment is already surrendered at 720px, so the difference simply
-   * takes the row rather than pretending to sit over a third of the bar. */
-  .clocks {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    align-items: start;
-    gap: 16px 20px;
-  }
-  .clk-gap {
-    grid-column: 1 / -1;
-  }
   /* The 78% basis plus a nowrap label overflows a phone; let the reported
    * label shrink and the hatched label wrap instead. */
   .timelabels-known {
