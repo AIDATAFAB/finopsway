@@ -601,6 +601,19 @@ h3 {
   color: var(--muted);
 }
 
+/* The trademark line sits under the whole footer bar, not beside the wordmark:
+ * it is a full sentence and would fight the nav for the same row. Measure is
+ * capped so it wraps into two or three lines rather than one long ruler. */
+.legal {
+  border-top: 1px solid var(--ink-lift);
+  padding: 14px 0 20px;
+  max-width: 78ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
 /* Below this a third of the row cannot hold a clock; the grid gives way to a
  * plain wrapping row and the exact hatch alignment with it. */
 @media (max-width: 720px) {
