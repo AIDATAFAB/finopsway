@@ -162,8 +162,8 @@
         <article class="card">
           <h3>A real query, from your browser</h3>
           <p>
-            It runs a read-only SQL query against the
-            <code>system.billing</code> tables from the browser itself. No
+            It runs read-only SQL against the <code>system.billing</code> and
+            <code>system.compute</code> tables from the browser itself. No
             backend, no OAuth flow, nothing to deploy. The credential is a
             workspace personal access token you paste into the options page,
             or optionally the browser session you already have.
@@ -236,7 +236,9 @@
       <p>
         Data the extension handles is used only to display your Databricks
         spend, which is its single purpose. None of it is sold, transferred to
-        third parties, or used for advertising.
+        third parties, or used for advertising. The cloud machine prices ship
+        inside the extension, so estimating what your clusters cost contacts no
+        cloud provider either.
         <a href="./privacy/">Read the full privacy policy</a>.
       </p>
     </section>

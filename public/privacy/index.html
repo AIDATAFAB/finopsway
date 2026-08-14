@@ -91,6 +91,26 @@
         read.
       </p>
       <p>
+        <strong>Compute machine hours, if you use the cloud cost view.</strong>
+        To estimate what the machines under your clusters cost, the extension
+        also reads <code>system.compute.node_timeline</code> - again read-only,
+        again from your own workspace. It selects only the cluster id, the
+        machine type, whether the node was a driver, the hour, and counts of
+        minutes and instances. It does <em>not</em> read that table's
+        utilisation, network or IP address columns. The result is aggregated to
+        one row per cluster, machine type and hour before it is stored, and is
+        replaced wholesale on each refresh rather than accumulated.
+      </p>
+      <p>
+        <strong>Which cloud and region your workspace runs in.</strong> The
+        extension runs <code>SELECT current_metastore()</code>, which returns a
+        string such as <code>aws:us-east-2:&lt;id&gt;</code>. The cloud and the
+        region select which machine price list to use; the metastore identifier
+        in that string is stored alongside them but is not read by any feature,
+        is never written to the console, and like everything else here never
+        leaves your browser.
+      </p>
+      <p>
         <strong>Extension settings.</strong> Your warehouse choice, catalog,
         retention and display preferences, in <code>chrome.storage.local</code>.
       </p>
@@ -103,6 +123,15 @@
         extension declares no permission that would allow any. Your token is sent
         to that workspace and nowhere else. Credentials are keyed by workspace
         origin, so a token for one workspace is not reachable from another.
+      </p>
+      <p>
+        <strong>The cloud cost view contacts no cloud provider.</strong> AWS and
+        Azure machine list prices are downloaded by us in advance, from those
+        providers' public price lists, and ship inside the extension package as
+        static files. Estimating what a cluster costs is a lookup in a file
+        already on your disk. Nothing about your clusters, your account or your
+        region is sent to Amazon, Microsoft or anyone else, and the extension has
+        no permission that would let it.
       </p>
 
       <h2>What we do not do</h2>
@@ -123,7 +152,13 @@
         </li>
         <li>
           The extension writes nothing to Databricks. Its SQL only reads
-          <code>system.billing</code>.
+          <code>system.billing</code> and <code>system.compute</code>, and only
+          ever with <code>SELECT</code>.
+        </li>
+        <li>
+          It reads nothing about the <em>content</em> of your work. No notebook,
+          query text, table, result or file is read at any point - the tables it
+          queries describe cost and compute shape, not data.
         </li>
       </ul>
 
@@ -138,9 +173,10 @@
       <h2>Removing your data</h2>
       <p>
         Uninstalling the extension removes the stored token and settings. The
-        cached billing rows live in the workspace origin's IndexedDB and are
-        removed by the <strong>Clear cached usage</strong> action on the options
-        page, or by clearing site data for the workspace in your browser.
+        cached billing rows, machine hours and the cloud/region record live in
+        the workspace origin's IndexedDB and are removed together by the
+        <strong>Clear cached usage</strong> action on the options page, or by
+        clearing site data for the workspace in your browser.
       </p>
 
       <h2>A note on token scope</h2>
