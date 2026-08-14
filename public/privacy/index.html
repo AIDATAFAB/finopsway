@@ -50,7 +50,7 @@
     <main id="main" class="section prose">
       <h1 class="prose-title">Privacy policy</h1>
       <p class="prose-meta">
-        <strong>finopsway-costs</strong> browser extension. Last updated 12 August 2026.
+        <strong>finopsway-costs</strong> browser extension. Last updated 14 August 2026.
       </p>
       <p>
         The Chrome Web Store and addons.mozilla.org require a privacy policy at a
@@ -79,16 +79,20 @@
       </p>
       <p>
         <strong>Databricks billing usage records and SKU prices.</strong> The
-        extension runs a read-only SQL query against the
+        extension runs read-only SQL queries against the
         <code>system.billing</code> tables of your own workspace and keeps the
         rows in IndexedDB, in the workspace origin's own storage. This is a cache:
-        it holds a rolling window of about a week, is pruned on every sync, and
-        can be dropped at any time from the options page. It contains only records
-        the signed-in identity is already entitled to read.
+        it holds the history you configure on the options page
+        (<strong>Days to keep</strong>, 30 days by default, at most a year), is
+        pruned to that retention on every sync, and can be dropped at any time
+        from the options page. Alongside the rows it keeps only its own
+        bookkeeping: which day was last fetched, when, and how many rows landed.
+        It contains only records the signed-in identity is already entitled to
+        read.
       </p>
       <p>
-        <strong>Extension settings.</strong> Your warehouse choice, catalog and
-        display preferences, in <code>chrome.storage.local</code>.
+        <strong>Extension settings.</strong> Your warehouse choice, catalog,
+        retention and display preferences, in <code>chrome.storage.local</code>.
       </p>
 
       <h2>Where data goes</h2>
