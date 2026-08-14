@@ -293,48 +293,6 @@ h1 {
   white-space: nowrap;
 }
 
-/* ---------- the chip, as it renders in the product ----------------------- */
-.chipdemo {
-  padding-top: 8px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--ink-lift);
-  border: 1px solid #2c363d;
-  border-radius: 999px;
-  padding: 9px 17px;
-  font-size: 15px;
-  font-variant-numeric: tabular-nums;
-  max-width: 100%;
-  flex-wrap: wrap;
-}
-
-.lamp {
-  width: 8px;
-  height: 8px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--mint);
-  box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.18);
-}
-.lamp.small {
-  width: 7px;
-  height: 7px;
-  box-shadow: 0 0 0 2px rgba(61, 220, 151, 0.18);
-}
-
-.amount {
-  color: var(--pale);
-  font-weight: 700;
-}
-.denom,
-.window {
-  color: var(--muted);
-}
-
 .caption {
   font-size: 14.5px;
   color: var(--muted);
@@ -402,6 +360,86 @@ h3 {
   font-size: 15.5px;
   color: var(--fg-soft);
   max-width: none;
+}
+
+/* ---------- the screenshot and its callouts ------------------------------- */
+/* The shot is dark workspace UI, so on the light theme it needs a frame to read
+ * as a screen rather than a hole in the page: ink ground, hairline, radius. The
+ * figure is the positioning context for the pins. */
+.shot {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--ink);
+  line-height: 0; /* kills the inline-image descender gap under the frame */
+}
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Numbered pins, placed in percentages against the crop they were measured on
+ * (988x700). Replacing the image means re-measuring them - there is no way to
+ * make a pin track a picture. The ring is the page ground, not a colour, so the
+ * pin reads on either theme and over any part of the shot. */
+.pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 25px;
+  text-align: center;
+  box-shadow: 0 0 0 3px rgba(14, 20, 24, 0.7);
+}
+
+/* The legend under the shot, not beside it: a side column would squeeze the
+ * image to about 600px, and the popover's own type would stop being readable -
+ * which defeats showing a screenshot at all. */
+.callouts {
+  list-style: none;
+  counter-reset: callout;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px 24px;
+}
+/* The row gap is tiny on purpose: it separates a heading from its own sentence,
+ * not one callout from the next - that is the parent grid's 20px. */
+.callouts li {
+  counter-increment: callout;
+  display: grid;
+  grid-template-columns: 25px 1fr;
+  column-gap: 10px;
+  row-gap: 2px;
+  font-size: 15px;
+  color: var(--fg-soft);
+}
+/* Same disc as .pin, so the eye pairs number to number without being told. */
+.callouts li::before {
+  content: counter(callout);
+  grid-row: 1 / 3;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 25px;
+  text-align: center;
+}
+.callouts b {
+  color: var(--fg);
+  font-weight: 700;
 }
 
 /* ---------- chip anatomy -------------------------------------------------- */
@@ -650,6 +688,19 @@ h3 {
   }
   .clk-gap .clk-time {
     font-size: clamp(17px, 5vw, 30px);
+  }
+
+  /* The narrow crop takes over here (see the <picture> in index.html), and the
+   * pins were measured against the wide one. Hiding them is the honest move:
+   * placed on a different crop they would point at the wrong thing. */
+  .pin {
+    display: none;
+  }
+  /* One column: the legend now reads as a list, since it no longer has pins to
+   * pair with, and four 200px columns would shrink the text to fit. */
+  .callouts {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 }
 

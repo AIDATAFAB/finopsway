@@ -33,6 +33,7 @@
         <span class="wordmark"><span class="wm-red">FinOps</span><span class="wm-pale">Way</span></span>
       </a>
       <nav class="nav">
+        <a href="#see">See it</a>
         <a href="#what">What it does</a>
         <a href="#get">Get it</a>
         <a href="#privacy">Your data</a>
@@ -81,25 +82,70 @@
         silence.
       </p>
 
-      <!-- The chip as it actually renders, in the extension's own colours. -->
-      <div class="chipdemo" role="img"
-        aria-label="Toolbar chip reading: 18 dollars 70 of 587 dollars today, up to 11:00">
-        <span class="chip">
-          <span class="lamp"></span>
-          <span class="amount">$18.70</span>
-          <span class="denom">of $587</span>
-          <span class="window">today &rarr; <span id="chip-known">11:00</span></span>
-        </span>
-      </div>
-      <p class="caption">
-        The two-hour lag above is an illustration; the real figure is your
-        workspace's own. What never changes is the rule: the window ends at
-        the last hour billing has reached, not at the current one.
-      </p>
     </div>
   </header>
 
   <main id="main">
+    <!-- The product itself, before any claim about it. The shot is a crop of a
+         real workspace (assets/screenshot.20260813.1.png in the extension repo),
+         never a mockup: everything the callouts point at is the extension's own
+         rendering, including the sentence about its own staleness. -->
+    <section class="section" id="see">
+      <h2>See it</h2>
+      <p class="lead">
+        One chip in the workspace navigation, and the whole answer a click
+        below it.
+      </p>
+
+      <figure class="shot">
+        <picture>
+          <!-- A phone shows the chip and the popover alone. The wide crop's
+               popover text would land near 5px at 430 CSS px, which is a
+               screenshot of nothing. -->
+          <source media="(max-width: 720px)" srcset="./shots/chip-popover-narrow.png" width="454" height="688" />
+          <img src="./shots/workspace-popover.png" width="988" height="700" loading="lazy"
+            alt="A Databricks workspace home page. In the top navigation, a chip reads: workspace $3.13, 24 h to 18:00, 4 h ago. Open below it, a panel with 24 h, 7 d and 14 d tabs, a bar chart whose last hours are hatched, a table of cost per SKU against the previous 24 hours, and a note that the window ends at 18:00 because billing has not reported the four hours since." />
+        </picture>
+        <!-- Percentage pins keyed to THIS crop (988x700). They are hidden below
+             720px, where the narrow crop replaces the image they point at. -->
+        <b class="pin" style="left: 41.5%; top: 4.1%" aria-hidden="true">1</b>
+        <b class="pin" style="left: 45.3%; top: 11.7%" aria-hidden="true">2</b>
+        <b class="pin" style="left: 90.1%; top: 21.4%" aria-hidden="true">3</b>
+        <b class="pin" style="left: 45.3%; top: 51%" aria-hidden="true">4</b>
+      </figure>
+
+      <ol class="callouts">
+        <li>
+          <b>The chip, in the nav</b>
+          $3.13 for the workspace over the 24 h to 18:00 - and how old that is,
+          because a cost number without an as-of is half a number.
+        </li>
+        <li>
+          <b>Click for the breakdown</b>
+          24 h, 7 d and 14 d of the same scope. The heading names what you are
+          looking at: workspace, by SKU.
+        </li>
+        <li>
+          <b>The hatch is the lag</b>
+          Billing stopped at 18:00, so the hours since are drawn hatched rather
+          than filled with a zero.
+        </li>
+        <li>
+          <b>Every SKU, with a comparison</b>
+          Each line against the same window a period earlier, so the total
+          arrives with something to measure it against.
+        </li>
+      </ol>
+
+      <!-- A <p>, not a <figcaption>: it comments on the callouts as much as on
+           the image, and a figcaption has to live inside the figure. -->
+      <p class="caption">
+        The last line of that panel is the extension talking about its own
+        limits: <em>the window ends at 18:00, billing has not reported the 4 h
+          since</em>. That is a real workspace, not a mockup.
+      </p>
+    </section>
+
     <section class="section" id="what">
       <h2>What it does</h2>
       <div class="cards">
@@ -216,13 +262,12 @@
   <script>
     // The two clocks. "Your clock" is the visitor's real time; "your bill's
     // clock" trails it by an illustrative two hours, floored to the hour the
-    // way an ingestion horizon lands on hour boundaries. The static HTML
-    // times are the no-JS fallback and the caption's disclaimer covers both.
+    // way an ingestion horizon lands on hour boundaries. The static HTML times
+    // are the no-JS fallback.
     (function () {
       var nowEl = document.getElementById("clk-now");
       var knownEl = document.getElementById("clk-known");
       var gapEl = document.getElementById("clk-gap");
-      var chipEl = document.getElementById("chip-known");
       if (!nowEl || !knownEl || !gapEl) return;
 
       // 24-hour, zero-padded: the format the chip itself prints ("-> 11:00"),
@@ -246,7 +291,6 @@
         nowEl.textContent = fmt(now);
         knownEl.textContent = fmt(known);
         gapEl.textContent = text;
-        if (chipEl) chipEl.textContent = fmt(known);
       }
 
       tick();
